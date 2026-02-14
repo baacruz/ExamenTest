@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">ExamenTest</string>
+    <string name="herramientas">Herramientas</string>
+    <string name="tecnicos">Tecnicos</string>
+    <string name="asignaciones">Asignaciones</string>
+    <string name="nombre">Nombre</string>
+    <string name="descripcion">Descripcion</string>
+    <string name="especificaciones">Especificaciones</string>
+    <string name="foto">Foto</string>
+    <string name="estado">Estado</string>
+    <string name="id">Id</string>
+    <string name="to">To</string>
 </resources>

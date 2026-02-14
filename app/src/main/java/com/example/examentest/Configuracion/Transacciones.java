@@ -14,8 +14,7 @@ public class Transacciones {
 
 
     //Table Rates Fields
-    public static final String TABLE_NAME = "Herramientas";
-
+    //  Tabla Herramientas
     public static final String herramienta_id = "id";
     public static final String nombre = "nombre";
     public static final String descripcion = "descripcion";
@@ -24,8 +23,16 @@ public class Transacciones {
     public static final String estado = "estado"; //por defecto disponible
 
 
-    
+    public static final String TABLE_NAME = "Tecnicos";
 
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_NOMBRE = "nombre";
+    public static final String COLUMN_TELEFONO = "telefono";
+    public static final String COLUMN_ESPECIALIDAD = "especialidad";
+
+
+
+    public static final String DropTableHerramientas = "DROP TABLE IF EXISTS " + tbherramientas;
 
 
     /*
@@ -39,12 +46,18 @@ public class Transacciones {
 
      */
 
-    public static final String CreateTableRates = " CREATE TABLE " + tbrates + " ( " +
-            id + " INTEGER PRIMARY KEY AUTOINCREMENT , " +
-            from_code + " TEXT , " +
-            to_code + " TEXT , " +
-            rate + " REAL ) " ;
+    public static final String TABLE_HERRAMIENTAS = "Herramientas";
 
+    public static final String CreateTableHerramientas =
+            "CREATE TABLE " + TABLE_HERRAMIENTAS + " ( " +
+                    herramienta_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    nombre + " TEXT NOT NULL, " +
+                    descripcion + " TEXT NOT NULL, " +
+                    especificaciones + " TEXT NOT NULL, " +
+                    foto + " TEXT, " +
+                    estado + " TEXT NOT NULL DEFAULT 'DISPONIBLE' )";
+
+    /*
     public static final String CreateTableConversions = " CREATE TABLE " + tbconversions + " ( " +
             id + " INTEGER PRIMARY KEY AUTOINCREMENT , " +
             from_code + " TEXT , " +
@@ -73,5 +86,5 @@ public class Transacciones {
     //DML
     public static final String SelectTableConversions = "SELECT * FROM " + tbconversions;
 
-
+*/
 }
