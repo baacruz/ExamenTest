@@ -24,13 +24,9 @@ public class SQLiteConexion extends SQLiteOpenHelper
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL(Transacciones.DropTableHerramientas);
-        onCreate(db);
-
-        db.execSQL(Transacciones.DropTableTecnicos);
-        onCreate(db);
-
         db.execSQL(Transacciones.DropTableAsignaciones);
+        db.execSQL(Transacciones.DropTableHerramientas);
+        db.execSQL(Transacciones.DropTableTecnicos);
         onCreate(db);
 
     }
