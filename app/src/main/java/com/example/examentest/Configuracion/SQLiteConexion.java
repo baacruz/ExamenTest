@@ -16,8 +16,8 @@ public class SQLiteConexion extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(Transacciones.CreateTableHerramientas);
-        //db.execSQL(Transacciones.CreateTableTecnicos);
-        //db.execSQL(Transacciones.CreateTableAsignaciones);
+        db.execSQL(Transacciones.CreateTableTecnicos);
+        db.execSQL(Transacciones.CreateTableAsignaciones);
 
     }
 
@@ -27,12 +27,11 @@ public class SQLiteConexion extends SQLiteOpenHelper
         db.execSQL(Transacciones.DropTableHerramientas);
         onCreate(db);
 
-        /*
         db.execSQL(Transacciones.DropTableTecnicos);
         onCreate(db);
 
         db.execSQL(Transacciones.DropTableAsignaciones);
-        onCreate(db);*/
+        onCreate(db);
 
     }
 }

@@ -22,69 +22,74 @@ public class Transacciones {
     public static final String foto = "foto"; //uri
     public static final String estado = "estado"; //por defecto disponible
 
+    //Tecnicos
+    public static final String tecnico_id = "tecnico_id";
+    public static final String nombre_tecnico = "nombre";
+    public static final String telefono = "telefono";
+    public static final String especialidad = "especialidad";
 
-    public static final String TABLE_NAME = "Tecnicos";
+    //Asignaciones
+    public static final String asignacion_id = "asignacion_id";
+    public static final String fecha_inicio = "fecha_inicio";
+    public static final String fecha_fin = "fecha_fin";
+    public static final String fecha_devolucion = "fecha_devolucion";
+    public static final String notas_entrega = "notas_entrega"; //uri foto al entregar
+    public static final String foto_entrega = "foto_entrega"; //uri foto entrega
+    public static final String foto_devolucion = "foto_devolucion"; //uri foto devolucion
+    //FK A herramientas
+    //FK A tecnicos
 
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_NOMBRE = "nombre";
-    public static final String COLUMN_TELEFONO = "telefono";
-    public static final String COLUMN_ESPECIALIDAD = "especialidad";
 
 
-
+    //Drops
     public static final String DropTableHerramientas = "DROP TABLE IF EXISTS " + tbherramientas;
+    public static final String DropTableTecnicos = "DROP TABLE IF EXISTS " + tbtecnicos;
+    public static final String DropTableAsignaciones = "DROP TABLE IF EXISTS " + tbasignaciones;
 
-
-    /*
-    public static final String CreateTablePerson = " CREATE TABLE " + tbpersons + " ( " +
-            id + " INTEGER PRIMARY KEY AUTOINCREMENT , " +
-            nombres + " TEXT , " +
-            apellidos + " TEXT , " +
-            edad + " INTEGER , " +
-            correo + " TEXT , " +
-            foto + " TEXT ) " ;
-
-     */
 
     public static final String TABLE_HERRAMIENTAS = "Herramientas";
+    public static final String TABLE_TECNICOS = "Tecnicos";
+    public static final String TABLE_ASIGNACIONES = "Asignaciones";
+
 
     public static final String CreateTableHerramientas =
-            "CREATE TABLE " + TABLE_HERRAMIENTAS + " ( " +
-                    herramienta_id + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "CREATE TABLE IF NOT EXISTS " + TABLE_HERRAMIENTAS  + " ( " +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT,"  +
                     nombre + " TEXT NOT NULL, " +
                     descripcion + " TEXT NOT NULL, " +
                     especificaciones + " TEXT NOT NULL, " +
                     foto + " TEXT, " +
                     estado + " TEXT NOT NULL DEFAULT 'DISPONIBLE' )";
 
-    /*
-    public static final String CreateTableConversions = " CREATE TABLE " + tbconversions + " ( " +
-            id + " INTEGER PRIMARY KEY AUTOINCREMENT , " +
-            from_code + " TEXT , " +
-            to_code + " TEXT , " +
-            amount + " REAL , " +
-            result + " REAL , " +
-            date + " TEXT ) " ;
 
+    public static final String CreateTableTecnicos =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_TECNICOS + " ( " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                    nombre_tecnico + " TEXT NOT NULL, " +
+                    telefono + " TEXT NOT NULL, " +
+                    especialidad + " TEXT NOT NULL )";
 
+    public static final String CreateTableAsignaciones =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_ASIGNACIONES + " ( " +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    herramienta_id + " INTEGER NOT NULL, " +
+                    tecnico_id + " INTEGER NOT NULL, " +
+                    fecha_inicio + " TEXT NOT NULL, " +
+                    fecha_fin + " TEXT NOT NULL, " +
+                    fecha_devolucion + " TEXT NOT NULL, " +
+                    notas_entrega + " TEXT NOT NULL, " +
+                    foto_entrega + " TEXT NOT NULL, " +
+                    foto_devolucion + " TEXT NOT NULL, " +
+                    "FOREIGN KEY(" + herramienta_id + ") REFERENCES " + TABLE_HERRAMIENTAS + "(" + herramienta_id + "), " +
+                    "FOREIGN KEY(" + tecnico_id + ") REFERENCES " + TABLE_TECNICOS + "(" + tecnico_id + ")" + ")";
 
-    //DDL  DROP
-    //public static final String DropTablePerson = "DROP TABLE IF Exists " + tbpersons;
 
     //DML
-    //public static final String SelectTablePerson ="SELECT * FROM " + tbpersons;
 
-    //DDL rates
-    public static final String DropTableRates = "DROP TABLE IF EXISTS " + tbrates;
+    public static final String SelectTableHerramientas = "SELECT * FROM " + TABLE_HERRAMIENTAS;
 
-    //DML
-    public static final String SelectTableRates = "SELECT * FROM " + tbrates;
+    public static final String SelectTableTecnicos = "SELECT * FROM " + TABLE_TECNICOS;
 
-    //DDL conversions
-    public static final String DropTableConversions = "DROP TABLE IF EXISTS " + tbconversions;
+    public static final String SelectTableAsignaciones = "SELECT * FROM " + TABLE_ASIGNACIONES;
 
-    //DML
-    public static final String SelectTableConversions = "SELECT * FROM " + tbconversions;
-
-*/
 }
