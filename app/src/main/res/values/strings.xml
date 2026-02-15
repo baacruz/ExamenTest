@@ -9,5 +9,7 @@
     <string name="foto">Foto</string>
     <string name="estado">Estado</string>
     <string name="id">Id</string>
-    <string name="to">To</string>
+    <string name="nombre_tecnico">Nombre Tecnico</string>
+    <string name="telefono">Telefono</string>
+
 </resources>
