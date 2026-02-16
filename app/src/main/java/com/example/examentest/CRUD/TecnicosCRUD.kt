@@ -1,7 +1,9 @@
 package com.example.examentest.CRUD
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import com.example.examentest.Configuracion.SQLiteConexion
 import com.example.examentest.Configuracion.Transacciones
 
@@ -17,5 +19,12 @@ class TecnicosCRUD(private val context: Context) {
         val resultado = db.insert(Transacciones.TABLE_TECNICOS, null, values)
         db.close()
         return resultado
+    }
+
+    @SuppressLint("Recycle")
+    fun obtenerTodosLosTecnicos(): Cursor? {
+        val conexion = SQLiteConexion(context, Transacciones.dbname, null, Transacciones.dbversion)
+        val db = conexion.readableDatabase
+        return db.rawQuery(Transacciones.SelectTableTecnicos, null)
     }
 }
