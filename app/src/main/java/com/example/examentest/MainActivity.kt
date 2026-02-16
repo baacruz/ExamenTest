@@ -3,6 +3,7 @@ package com.example.examentest
 import android.app.DatePickerDialog
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -16,6 +17,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +25,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -197,7 +201,7 @@ fun AsignacionScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(onClick = { 
+        Button(onClick = {
             if(herramientaSeleccionada == null || tecnicoSeleccionado == null || fechaInicio.isBlank() || fechaFin.isBlank()){
                 Toast.makeText(context, "Por favor, complete todos los campos", Toast.LENGTH_LONG).show()
             } else {
@@ -291,10 +295,6 @@ fun DatePicker(label: String, onDateSelected: (String) -> Unit) {
         }
     }
 }
-
-
-
-// ... (El resto de tus Composable functions)
 
 @Composable
 fun RegistroHerramientasScreen(onNavigateToList: () -> Unit) {
@@ -445,29 +445,45 @@ fun RegistroTecnicosScreen(onNavigateToList: () -> Unit) {
 fun HerramientasListScreen(onNavigateBack: () -> Unit) {
     val context = LocalContext.current
     val crud = HerramientasCRUD(context)
-    val cursor = crud.obtenerTodasLasHerramientas()
-    val herramientas = remember { mutableStateListOf<Pair<Int, String>>() }
+    val herramientas = remember { mutableStateListOf<Triple<Int, String, String?>>() }
 
-    if (cursor != null) {
-        if (cursor.moveToFirst()) {
-            herramientas.clear()
-            do {
-                val id = cursor.getInt(cursor.getColumnIndexOrThrow(Transacciones.herramienta_id))
-                val nombre = cursor.getString(cursor.getColumnIndexOrThrow(Transacciones.nombre_herramienta))
-                herramientas.add(Pair(id, nombre))
-            } while (cursor.moveToNext())
+    LaunchedEffect(Unit) {
+        crud.obtenerTodasLasHerramientas()?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val tempList = mutableListOf<Triple<Int, String, String?>>()
+                do {
+                    val id = cursor.getInt(cursor.getColumnIndexOrThrow(Transacciones.herramienta_id))
+                    val nombre = cursor.getString(cursor.getColumnIndexOrThrow(Transacciones.nombre_herramienta))
+                    val fotoPath = cursor.getString(cursor.getColumnIndexOrThrow(Transacciones.foto))
+                    tempList.add(Triple(id, nombre, fotoPath))
+                } while (cursor.moveToNext())
+                herramientas.clear()
+                herramientas.addAll(tempList)
+            }
         }
-        cursor.close()
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Button(onClick = onNavigateBack, modifier = Modifier.padding(bottom = 16.dp)) {
             Text("Volver")
         }
-        LazyColumn {
-            items(herramientas) { herramienta ->
-                Card(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), elevation = CardDefaults.cardElevation(4.dp)) {
-                    Text(text = "ID: ${herramienta.first}, Nombre: ${herramienta.second}", modifier = Modifier.padding(16.dp))
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(herramientas) { (id, nombre, fotoPath) ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ImageFromFile(path = fotoPath, modifier = Modifier.size(64.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(text = "ID: $id")
+                            Text(text = nombre, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        }
+                    }
                 }
             }
         }
@@ -478,19 +494,21 @@ fun HerramientasListScreen(onNavigateBack: () -> Unit) {
 fun TecnicosListScreen(onNavigateBack: () -> Unit) {
     val context = LocalContext.current
     val crud = TecnicosCRUD(context)
-    val cursor = crud.obtenerTodosLosTecnicos()
     val tecnicos = remember { mutableStateListOf<Pair<Int, String>>() }
 
-    if (cursor != null) {
-        if (cursor.moveToFirst()) {
-            tecnicos.clear()
-            do {
-                val id = cursor.getInt(cursor.getColumnIndexOrThrow(Transacciones.tecnico_id))
-                val nombre = cursor.getString(cursor.getColumnIndexOrThrow(Transacciones.nombre_tecnico))
-                tecnicos.add(Pair(id, nombre))
-            } while (cursor.moveToNext())
+    LaunchedEffect(Unit) {
+        crud.obtenerTodosLosTecnicos()?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val tempList = mutableListOf<Pair<Int, String>>()
+                do {
+                    val id = cursor.getInt(cursor.getColumnIndexOrThrow(Transacciones.tecnico_id))
+                    val nombre = cursor.getString(cursor.getColumnIndexOrThrow(Transacciones.nombre_tecnico))
+                    tempList.add(id to nombre)
+                } while (cursor.moveToNext())
+                tecnicos.clear()
+                tecnicos.addAll(tempList)
+            }
         }
-        cursor.close()
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
@@ -559,6 +577,35 @@ fun FotoInput(fotoBitmap: Bitmap?, onFotoTomada: (Bitmap) -> Unit) {
             Button(onClick = { galleryLauncher.launch("image/*") }) {
                 Text("Elegir de Galería")
             }
+        }
+    }
+}
+
+@Composable
+fun ImageFromFile(path: String?, modifier: Modifier = Modifier) {
+    val bitmap = remember(path) {
+        if (path.isNullOrBlank()) return@remember null
+        try {
+            BitmapFactory.decodeFile(path)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = "Foto de la herramienta",
+            modifier = modifier,
+            contentScale = ContentScale.Crop
+        )
+    } else {
+        Box(
+            modifier = modifier.background(Color.Gray),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Sin foto", color = Color.White, fontSize = 10.sp)
         }
     }
 }

@@ -37,6 +37,37 @@ class HerramientasCRUD(private val context: Context) {
         return db.rawQuery("SELECT * FROM ${Transacciones.TABLE_HERRAMIENTAS} WHERE ${Transacciones.estado} = 'DISPONIBLE'", null)
     }
 
+    @SuppressLint("Recycle")
+    fun obtenerVistaCompletaHerramientas(): Cursor? {
+        val conexion = SQLiteConexion(context, Transacciones.dbname, null, Transacciones.dbversion)
+        val db = conexion.readableDatabase
+        val query = """
+        SELECT
+            h.id as _id,
+            h.nombre_herramienta,
+            h.especificaciones,
+            h.estado,
+            latest_a.asignacion_id,
+            latest_a.fecha_fin,
+            latest_a.fecha_devolucion,
+            t.nombre_tecnico
+        FROM
+            ${Transacciones.TABLE_HERRAMIENTAS} AS h
+        LEFT JOIN
+            ${Transacciones.TABLE_ASIGNACIONES} AS latest_a ON latest_a.asignacion_id = (
+                SELECT MAX(asignacion_id)
+                FROM ${Transacciones.TABLE_ASIGNACIONES}
+                WHERE herramienta_fk_id = h.id
+            )
+        LEFT JOIN
+            ${Transacciones.TABLE_TECNICOS} AS t ON latest_a.tecnico_fk_id = t.tecnico_id
+        ORDER BY
+            CASE WHEN h.estado = 'DISPONIBLE' THEN 1 ELSE 0 END,
+            latest_a.fecha_fin ASC
+    """
+        return db.rawQuery(query, null)
+    }
+
     fun actualizarEstadoHerramienta(id: Int, nuevoEstado: String): Int {
         val conexion = SQLiteConexion(context, Transacciones.dbname, null, Transacciones.dbversion)
         val db = conexion.writableDatabase

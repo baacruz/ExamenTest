@@ -26,4 +26,20 @@ class AsignacionesCRUD(private val context: Context) {
         db.close()
         return resultado
     }
+
+    fun marcarDevolucion(asignacionId: Int, fechaDevolucion: String): Int {
+        val conexion = SQLiteConexion(context, Transacciones.dbname, null, Transacciones.dbversion)
+        val db = conexion.writableDatabase
+        val values = ContentValues().apply {
+            put(Transacciones.fecha_devolucion, fechaDevolucion)
+        }
+        val resultado = db.update(
+            Transacciones.TABLE_ASIGNACIONES,
+            values,
+            "${Transacciones.asignacion_id} = ?",
+            arrayOf(asignacionId.toString())
+        )
+        db.close()
+        return resultado
+    }
 }
